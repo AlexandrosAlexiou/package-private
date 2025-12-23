@@ -5,6 +5,7 @@ build/
 
 # Kotlin
 .kotlin/
+kotlin-js-store/
 
 # Maven
 target/
