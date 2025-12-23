@@ -49,6 +49,15 @@ class MavenIntegrationTest {
         assertTrue(result.exitCode == 0, "Build should succeed when accessing public members: ${result.output}")
     }
 
+    @Test
+    fun `maven java in same package can access package-private kotlin`() {
+        copyResourceProject("maven-java-same-package-project", tempDir)
+
+        val result = runMaven(tempDir, "compile")
+        // Java in same package should be allowed to access package-private Kotlin
+        assertTrue(result.exitCode == 0, "Build should succeed for same package access: ${result.output}")
+    }
+
     private fun copyResourceProject(name: String, targetDir: File) {
         val resourceDir = File(javaClass.classLoader.getResource(name)!!.toURI())
         resourceDir.copyRecursively(targetDir, overwrite = true)
