@@ -8,8 +8,18 @@
 A Kotlin compiler plugin that adds <b>package-private</b> visibility to Kotlin, similar to Java's default (package) visibility.
 </p>
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0+-blue.svg)](https://kotlinlang.org)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
+<p align="center">
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.0+-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin"></a>
+  <a href="https://github.com/AlexandrosAlexiou/kotlin-package-private/releases/tag/v0.1.0"><img src="https://img.shields.io/badge/Release-v0.1.0-blue?style=for-the-badge" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge" alt="License"></a>
+  <a href="https://github.com/AlexandrosAlexiou/kotlin-package-private/issues"><img src="https://img.shields.io/github/issues/AlexandrosAlexiou/kotlin-package-private?style=for-the-badge" alt="Issues"></a>
+</p>
+
+<p align="center">
+<img src="https://img.shields.io/badge/JVM-Supported-007396?style=for-the-badge&logo=openjdk&logoColor=white" alt="JVM">
+<img src="https://img.shields.io/badge/Android-Supported-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+  <img src="https://img.shields.io/badge/Multiplatform-Supported-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin Multiplatform">
+</p>
 
 
 ## The Problem
@@ -275,19 +285,6 @@ class GeneratedHelper
 - **Reflection (JVM)**: Can bypass with `setAccessible(true)`
 - **JS/Wasm**: Raw JavaScript can access anything - compile-time checks only
 - **Native C interop**: Exported C headers may still be accessible
-
-## Project Structure
-
-```
-kotlin-package-private/
-├── package-private-annotations/     # @PackagePrivate annotation (multiplatform)
-├── package-private-compiler-plugin/ # K2 compiler plugin (FIR checker + bytecode transformer)
-├── package-private-gradle-plugin/   # Gradle plugin wrapper
-├── integration-tests/               # Integration tests for Gradle/Maven
-└── examples/
-    ├── gradle/                      # Gradle example
-    └── maven/                       # Maven example
-```
 
 **Note:** Maven doesn't need a separate plugin - it discovers the compiler plugin via `components.xml` automatically.
 
