@@ -223,16 +223,27 @@ This project uses a **Kotlin Compiler Plugin** (not KSP) because:
 1. **KSP** is designed for code generation and symbol processing - it cannot report compilation errors for cross-file access violations
 2. **Compiler plugins** can intercept the compilation pipeline and report errors during the FIR (Frontend IR) analysis phase
 
-The plugin has two components:
+The plugin has three components:
 
-1. **FIR Checker** - Reports compile-time errors when Kotlin code accesses `@PackagePrivate` symbols from another package
+1. **FIR Checker** - Reports compile-time errors when Kotlin code accesses `@PackagePrivate` symbols from another package (all platforms)
 2. **ClassGenerator Extension** - Modifies JVM bytecode to remove the `public` access flag, making declarations truly package-private at the JVM level
+3. **IR Generation Extension** - Sets `internal` visibility at the IR level for non-JVM platforms (Native/JS/Wasm)
 
-This means **both Kotlin and Java** code are blocked from accessing `@PackagePrivate` declarations from other packages.
+### Platform Support
+
+| Platform | Kotlin Enforcement | Interop Enforcement |
+|----------|-------------------|---------------------|
+| JVM | ✅ FIR Checker | ✅ True JVM package-private (Java blocked) |
+| Native | ✅ FIR Checker | ✅ Internal visibility (C/ObjC limited) |
+| JS | ✅ FIR Checker | ⚠️ Internal visibility (no true enforcement) |
+| Wasm | ✅ FIR Checker | ⚠️ Internal visibility (no true enforcement) |
+
+This means **both Kotlin and Java** code are blocked from accessing `@PackagePrivate` declarations from other packages on JVM.
 
 ### Limitations
 
-- **Runtime reflection**: Reflection can still access `@PackagePrivate` members at runtime using `setAccessible(true)`
+- **Runtime reflection**: Reflection can still access `@PackagePrivate` members at runtime using `setAccessible(true)` (JVM)
+- **JS/Wasm**: JavaScript doesn't have true visibility enforcement; `internal` only adds name mangling
 
 ## Project Structure
 

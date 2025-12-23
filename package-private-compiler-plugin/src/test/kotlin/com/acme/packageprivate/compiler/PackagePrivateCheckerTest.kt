@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertContains
+import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCompilerApi::class)
 class PackagePrivateCheckerTest {
@@ -247,6 +248,112 @@ class PackagePrivateCheckerTest {
 
         assertEquals(KotlinCompilation.ExitCode.COMPILATION_ERROR, result.exitCode)
         assertContains(result.messages, "package-private")
+    }
+
+    @Test
+    fun `IR transformation sets internal visibility on class`() {
+        val result = compile(
+            annotationSource,
+            SourceFile.kotlin(
+                "Internal.kt",
+                """
+                package com.example.internal
+
+                import com.acme.packageprivate.PackagePrivate
+
+                @PackagePrivate
+                class HiddenClass {
+                    fun work() = "work"
+                }
+                """
+            )
+        )
+
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+        
+        // Verify the class is compiled and can be loaded
+        val hiddenClass = result.classLoader.loadClass("com.example.internal.HiddenClass")
+        assertEquals("com.example.internal.HiddenClass", hiddenClass.name)
+        
+        // On JVM, the class should be package-private (no public modifier)
+        val isPublic = java.lang.reflect.Modifier.isPublic(hiddenClass.modifiers)
+        assertEquals(false, isPublic, "Class should not be public (should be package-private)")
+    }
+
+    @Test
+    fun `IR transformation sets internal visibility on function`() {
+        val result = compile(
+            annotationSource,
+            SourceFile.kotlin(
+                "Helper.kt",
+                """
+                package com.example.internal
+
+                import com.acme.packageprivate.PackagePrivate
+
+                class Helper {
+                    @PackagePrivate
+                    fun secretMethod(): String = "secret"
+                    
+                    fun publicMethod(): String = "public"
+                }
+                """
+            )
+        )
+
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+        
+        val helperClass = result.classLoader.loadClass("com.example.internal.Helper")
+        
+        // publicMethod should remain public
+        val publicMethod = helperClass.getDeclaredMethod("publicMethod")
+        assertEquals(true, java.lang.reflect.Modifier.isPublic(publicMethod.modifiers),
+            "publicMethod() should remain public")
+        
+        // secretMethod should be package-private (not public)
+        // Method might be name-mangled, so find it by prefix
+        val secretMethod = helperClass.declaredMethods.find { it.name.startsWith("secretMethod") }
+        assertNotNull(secretMethod, "secretMethod should exist")
+        assertEquals(false, java.lang.reflect.Modifier.isPublic(secretMethod!!.modifiers),
+            "secretMethod() should not be public (should be package-private)")
+    }
+
+    @Test
+    fun `IR transformation sets internal visibility on property`() {
+        val result = compile(
+            annotationSource,
+            SourceFile.kotlin(
+                "Data.kt",
+                """
+                package com.example.internal
+
+                import com.acme.packageprivate.PackagePrivate
+
+                class Data {
+                    @PackagePrivate
+                    val secretValue: String = "secret"
+                    
+                    val publicValue: String = "public"
+                }
+                """
+            )
+        )
+
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+        
+        val dataClass = result.classLoader.loadClass("com.example.internal.Data")
+        
+        // publicValue getter should remain public
+        val publicGetter = dataClass.getDeclaredMethod("getPublicValue")
+        assertEquals(true, java.lang.reflect.Modifier.isPublic(publicGetter.modifiers),
+            "getPublicValue() should remain public")
+        
+        // secretValue getter should be package-private (not public)
+        // Getter might be name-mangled, so find it by prefix
+        val secretGetter = dataClass.declaredMethods.find { it.name.contains("SecretValue") }
+        assertNotNull(secretGetter, "secretValue getter should exist")
+        assertEquals(false, java.lang.reflect.Modifier.isPublic(secretGetter!!.modifiers),
+            "getSecretValue() should not be public (should be package-private)")
     }
 
     private fun compile(vararg sourceFiles: SourceFile): JvmCompilationResult {
