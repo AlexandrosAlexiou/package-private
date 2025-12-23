@@ -31,13 +31,31 @@ class MavenIntegrationTest {
         assertContains(result.output, "package-private")
     }
 
+    @Test
+    fun `maven java cannot access package-private kotlin class`() {
+        copyResourceProject("maven-java-interop-project", tempDir)
+
+        val result = runMaven(tempDir, "compile")
+        // Java should fail to compile because KotlinInternal is now package-private in bytecode
+        assertTrue(result.exitCode != 0, "Build should fail when Java accesses package-private Kotlin: ${result.output}")
+    }
+
+    @Test
+    fun `maven java can access public members of class with package-private members`() {
+        copyResourceProject("maven-java-interop-positive-project", tempDir)
+
+        val result = runMaven(tempDir, "compile")
+        // Java should successfully access public members even when class has some @PackagePrivate members
+        assertTrue(result.exitCode == 0, "Build should succeed when accessing public members: ${result.output}")
+    }
+
     private fun copyResourceProject(name: String, targetDir: File) {
         val resourceDir = File(javaClass.classLoader.getResource(name)!!.toURI())
         resourceDir.copyRecursively(targetDir, overwrite = true)
     }
 
     private fun runMaven(dir: File, vararg args: String): ProcessResult {
-        val process = ProcessBuilder("mvn", *args)
+        val process = ProcessBuilder("mvn", "clean", *args)
             .directory(dir)
             .redirectErrorStream(true)
             .start()

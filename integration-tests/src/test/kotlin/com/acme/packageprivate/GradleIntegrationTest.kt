@@ -1,15 +1,15 @@
 package com.acme.packageprivate
 
+import java.io.File
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
-import kotlin.test.assertTrue
-import kotlin.test.assertContains
 
 class GradleIntegrationTest {
 
-    @TempDir
-    lateinit var tempDir: File
+    @TempDir lateinit var tempDir: File
 
     private val rootDir: File by lazy {
         var dir = File(System.getProperty("user.dir"))
@@ -26,7 +26,7 @@ class GradleIntegrationTest {
         File(tempDir, "src/main/kotlin/com/example/api").deleteRecursively()
 
         val result = runGradle(tempDir, "build")
-        assertTrue(result.exitCode == 0, "Build should succeed: ${result.output}")
+        assertEquals(result.exitCode, 0, "Build should succeed: ${result.output}")
     }
 
     @Test
@@ -44,29 +44,34 @@ class GradleIntegrationTest {
 
         val result = runGradle(tempDir, "build")
         // Java should fail to compile because KotlinInternal is now package-private in bytecode
-        assertTrue(result.exitCode != 0, "Build should fail when Java accesses package-private Kotlin: ${result.output}")
+        assertTrue(
+            result.exitCode != 0,
+            "Build should fail when Java accesses package-private Kotlin: ${result.output}",
+        )
         // Check for access error message (javac reports "not public" for package-private access)
         assertTrue(
-            result.output.contains("not public") || 
-            result.output.contains("KotlinInternal") ||
-            result.output.contains("cannot be accessed"),
-            "Error should mention access restriction: ${result.output}"
+            result.output.contains("not public") ||
+                result.output.contains("KotlinInternal") ||
+                result.output.contains("cannot be accessed"),
+            "Error should mention access restriction: ${result.output}",
         )
     }
 
     @Test
     fun `java in same package can access package-private kotlin`() {
         copyResourceProject("java-interop-project", tempDir)
-        
+
         // Move Java file to same package as Kotlin
         val javaSourceDir = File(tempDir, "src/main/java/com/example/internal")
         javaSourceDir.mkdirs()
-        
+
         File(tempDir, "src/main/java/com/example/other").deleteRecursively()
-        
-        File(javaSourceDir, "JavaSamePackage.java").writeText("""
+
+        File(javaSourceDir, "JavaSamePackage.java")
+            .writeText(
+                """
             package com.example.internal;
-            
+
             // Same package - should be allowed
             public class JavaSamePackage {
                 public String access() {
@@ -74,10 +79,16 @@ class GradleIntegrationTest {
                     return internal.publicMethod();
                 }
             }
-        """.trimIndent())
+        """
+                    .trimIndent()
+            )
 
         val result = runGradle(tempDir, "build")
-        assertTrue(result.exitCode == 0, "Build should succeed for same package access: ${result.output}")
+        assertEquals(
+            result.exitCode,
+            0,
+            "Build should succeed for same package access: ${result.output}",
+        )
     }
 
     @Test
@@ -85,8 +96,13 @@ class GradleIntegrationTest {
         copyResourceProject("java-interop-positive-project", tempDir)
 
         val result = runGradle(tempDir, "build")
-        // Java should successfully access public members even when class has some @PackagePrivate members
-        assertTrue(result.exitCode == 0, "Build should succeed when accessing public members: ${result.output}")
+        // Java should successfully access public members even when class has some @PackagePrivate
+        // members
+        assertEquals(
+            result.exitCode,
+            0,
+            "Build should succeed when accessing public members: ${result.output}",
+        )
     }
 
     private fun copyResourceProject(name: String, targetDir: File) {
@@ -101,10 +117,11 @@ class GradleIntegrationTest {
     }
 
     private fun runGradle(dir: File, vararg args: String): ProcessResult {
-        val process = ProcessBuilder("./gradlew", *args, "--no-daemon", "-q")
-            .directory(dir)
-            .redirectErrorStream(true)
-            .start()
+        val process =
+            ProcessBuilder("./gradlew", *args, "--no-daemon", "-q")
+                .directory(dir)
+                .redirectErrorStream(true)
+                .start()
 
         val output = process.inputStream.bufferedReader().readText()
         val exitCode = process.waitFor()
