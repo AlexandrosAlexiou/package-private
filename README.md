@@ -1,6 +1,12 @@
-# kotlin-package-private
+<p align="center">
+  <img src=".github/logo.svg" alt="kotlin-package-private logo" width="150">
+</p>
 
-A Kotlin compiler plugin that adds **package-private** visibility to Kotlin, similar to Java's default (package) visibility.
+<h1 align="center">kotlin-package-private</h1>
+
+<p align="center">
+A Kotlin compiler plugin that adds <b>package-private</b> visibility to Kotlin, similar to Java's default (package) visibility.
+</p>
 
 ## Features
 
