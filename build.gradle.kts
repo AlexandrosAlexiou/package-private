@@ -10,8 +10,8 @@ subprojects {
     mavenCentral()
   }
 
-  // Apply maven-publish to library modules (not examples)
-  if (!project.path.startsWith(":examples")) {
+  // Apply maven-publish to library modules (not examples or integration-tests)
+  if (!project.path.startsWith(":examples") && project.name != "integration-tests") {
     apply(plugin = "maven-publish")
 
     afterEvaluate {
@@ -22,7 +22,48 @@ subprojects {
             groupId = rootProject.group.toString()
             artifactId = project.name
             version = rootProject.version.toString()
+
+            pom {
+              name.set(project.name)
+              description.set("Kotlin package-private visibility compiler plugin")
+              url.set("https://github.com/YOUR_USERNAME/kotlin-package-private")
+
+              licenses {
+                license {
+                  name.set("Apache License 2.0")
+                  url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                }
+              }
+
+              developers {
+                developer {
+                  id.set("YOUR_USERNAME")
+                  name.set("Your Name")
+                }
+              }
+
+              scm {
+                url.set("https://github.com/YOUR_USERNAME/kotlin-package-private")
+                connection.set("scm:git:git://github.com/YOUR_USERNAME/kotlin-package-private.git")
+                developerConnection.set("scm:git:ssh://github.com/YOUR_USERNAME/kotlin-package-private.git")
+              }
+            }
           }
+        }
+
+        repositories {
+          // GitHub Packages
+          maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/YOUR_USERNAME/kotlin-package-private")
+            credentials {
+              username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+              password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+          }
+
+          // Local Maven repository (for testing)
+          mavenLocal()
         }
       }
     }

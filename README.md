@@ -222,6 +222,35 @@ mvn compile
 # Should fail with: Cannot access 'com.acme.foo.Hidden': it is package-private in 'com.acme.foo'
 ```
 
+## Publishing
+
+### To Local Maven Repository
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+### To GitHub Packages
+
+1. Update `build.gradle.kts` with your GitHub username
+2. Create a GitHub release
+3. The `publish.yml` workflow will automatically publish
+
+Or manually:
+
+```bash
+export GITHUB_TOKEN=your_token
+export GITHUB_ACTOR=your_username
+./gradlew publish
+```
+
+### To Maven Central
+
+For Maven Central publishing, you'll need to:
+1. Register at [Sonatype OSSRH](https://central.sonatype.org/)
+2. Add GPG signing configuration
+3. Update the publishing repository URL
+
 ## License
 
 Apache License 2.0
