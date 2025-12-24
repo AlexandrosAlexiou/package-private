@@ -83,6 +83,18 @@ class GradleIntegrationTest {
         )
     }
 
+    @Test
+    fun `warns on redundant PackagePrivate annotation`() {
+        copyResourceProject("gradle-project", tempDir)
+        // Remove the violating file so build succeeds
+        File(tempDir, "src/main/kotlin/com/example/api").deleteRecursively()
+
+        val result = runGradle(tempDir, "build", quiet = false)
+        assertEquals(0, result.exitCode, "Build should succeed: ${result.output}")
+        assertContains(result.output, "Redundant @PackagePrivate annotation")
+        assertContains(result.output, "'work'")
+    }
+
     private fun copyResourceProject(name: String, targetDir: File) {
         // Copy gradle wrapper
         File(rootDir, "gradlew").copyTo(File(targetDir, "gradlew"), overwrite = true)
@@ -94,9 +106,12 @@ class GradleIntegrationTest {
         resourceDir.copyRecursively(targetDir, overwrite = true)
     }
 
-    private fun runGradle(dir: File, vararg args: String): ProcessResult {
+    private fun runGradle(dir: File, vararg args: String, quiet: Boolean = true): ProcessResult {
+        val baseArgs = mutableListOf("./gradlew", *args, "--no-daemon")
+        if (quiet) baseArgs.add("-q")
+        
         val process =
-            ProcessBuilder("./gradlew", *args, "--no-daemon", "-q")
+            ProcessBuilder(baseArgs)
                 .directory(dir)
                 .redirectErrorStream(true)
                 .start()
