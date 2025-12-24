@@ -42,7 +42,6 @@ package com.example.internal
 
 @PackagePrivate
 class Helper {  // Only accessible within com.example.internal
-    @PackagePrivate
     fun secretMethod() = "hidden from other packages"
 }
 ```
@@ -214,7 +213,6 @@ import com.acme.packageprivate.PackagePrivate
 
 @PackagePrivate
 class Helper {
-    @PackagePrivate
     fun doSomething(): String = "internal work"
 }
 
