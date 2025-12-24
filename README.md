@@ -272,19 +272,20 @@ class GeneratedHelper
 
 ## Platform Support
 
-| Platform | Compile-time | Runtime | How It Works |
-|----------|:------------:|:-------:|--------------|
-| **JVM/Android** | Yes | Yes | Removes `ACC_PUBLIC` bytecode flag → true JVM package-private, Java blocked |
-| **Native** (iOS, macOS, Linux) | Yes | Yes | Sets IR visibility to `internal` → name mangling prevents cross-module linking |
-| **JS/Wasm** | Yes | No | FIR checker only - JS has no runtime visibility enforcement |
+| Platform | Compile-time | Runtime | Notes |
+|----------|:------------:|:-------:|-------|
+| **JVM/Android** | ✅ | ✅ | True JVM package-private via bytecode modification |
+| **Native** (iOS, macOS, Linux) | ✅ | ❌ | Compile-time only - Native has no package-private concept |
+| **JS/Wasm** | ✅ | ❌ | Compile-time only - JS has no visibility enforcement |
+
+**Why compile-time is enough for non-JVM:** Package-private is a JVM concept. For Native/JS/Wasm, there's no equivalent runtime visibility. The FIR checker prevents cross-package access at compile time, which is the only meaningful enforcement possible.
 
 **Why not KSP?** KSP is for code generation - it can't report compilation errors. We need the FIR (Frontend IR) checker to block cross-package access at compile time.
 
 ### Limitations
 
 - **Reflection (JVM)**: Can bypass with `setAccessible(true)`
-- **JS/Wasm**: Raw JavaScript can access anything - compile-time checks only
-- **Native C interop**: Exported C headers may still be accessible
+- **Non-JVM platforms**: Compile-time enforcement only - no runtime visibility exists
 
 **Note:** Maven doesn't need a separate plugin - it discovers the compiler plugin via `components.xml` automatically.
 

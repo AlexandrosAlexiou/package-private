@@ -251,7 +251,7 @@ class PackagePrivateCheckerTest {
     }
 
     @Test
-    fun `IR transformation sets internal visibility on class`() {
+    fun `JVM bytecode sets package-private visibility on class`() {
         val result = compile(
             annotationSource,
             SourceFile.kotlin(
@@ -281,7 +281,7 @@ class PackagePrivateCheckerTest {
     }
 
     @Test
-    fun `IR transformation sets internal visibility on function`() {
+    fun `JVM bytecode sets package-private visibility on function`() {
         val result = compile(
             annotationSource,
             SourceFile.kotlin(
@@ -319,7 +319,7 @@ class PackagePrivateCheckerTest {
     }
 
     @Test
-    fun `IR transformation sets internal visibility on property`() {
+    fun `JVM bytecode sets package-private visibility on property`() {
         val result = compile(
             annotationSource,
             SourceFile.kotlin(

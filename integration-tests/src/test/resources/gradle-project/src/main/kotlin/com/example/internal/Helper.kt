@@ -4,6 +4,5 @@ import com.acme.packageprivate.PackagePrivate
 
 @PackagePrivate
 class Helper {
-    @PackagePrivate
-    fun work() = "done"
+    @PackagePrivate fun work() = "done"
 }
