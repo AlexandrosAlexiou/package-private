@@ -251,6 +251,58 @@ class PackagePrivateCheckerTest {
     }
 
     @Test
+    fun `warns on redundant @PackagePrivate on member of @PackagePrivate class`() {
+        val result = compile(
+            annotationSource,
+            SourceFile.kotlin(
+                "Internal.kt",
+                """
+                package com.example.internal
+
+                import com.acme.packageprivate.PackagePrivate
+
+                @PackagePrivate
+                class KotlinInternal {
+                    @PackagePrivate 
+                    fun secret(): String = "secret"
+
+                    fun publicMethod(): String = "public"
+                }
+                """
+            )
+        )
+
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+        assertContains(result.messages, "Redundant @PackagePrivate annotation")
+        assertContains(result.messages, "'secret'")
+    }
+
+    @Test
+    fun `no warning when @PackagePrivate on member of non-annotated class`() {
+        val result = compile(
+            annotationSource,
+            SourceFile.kotlin(
+                "Internal.kt",
+                """
+                package com.example.internal
+
+                import com.acme.packageprivate.PackagePrivate
+
+                class Helper {
+                    @PackagePrivate 
+                    fun secret(): String = "secret"
+                }
+                """
+            )
+        )
+
+        assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
+        // Should not contain redundant warning
+        assertEquals(false, result.messages.contains("Redundant"), 
+            "Should not warn about redundant annotation when class is not @PackagePrivate")
+    }
+
+    @Test
     fun `JVM bytecode sets package-private visibility on class`() {
         val result = compile(
             annotationSource,

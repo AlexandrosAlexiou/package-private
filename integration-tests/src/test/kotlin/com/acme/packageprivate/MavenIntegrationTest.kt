@@ -1,15 +1,15 @@
 package com.acme.packageprivate
 
+import java.io.File
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import java.io.File
-import kotlin.test.assertTrue
-import kotlin.test.assertContains
 
 class MavenIntegrationTest {
 
-    @TempDir
-    lateinit var tempDir: File
+    @TempDir lateinit var tempDir: File
 
     @Test
     fun `maven build succeeds with same package access`() {
@@ -18,7 +18,7 @@ class MavenIntegrationTest {
         File(tempDir, "src/main/kotlin/com/example/api").deleteRecursively()
 
         val result = runMaven(tempDir, "compile")
-        assertTrue(result.exitCode == 0, "Build should succeed: ${result.output}")
+        assertEquals(result.exitCode, 0, "Build should succeed: ${result.output}")
         assertContains(result.output, "Applied plugin: 'package-private'")
     }
 
@@ -37,7 +37,10 @@ class MavenIntegrationTest {
 
         val result = runMaven(tempDir, "compile")
         // Java should fail to compile because KotlinInternal is now package-private in bytecode
-        assertTrue(result.exitCode != 0, "Build should fail when Java accesses package-private Kotlin: ${result.output}")
+        assertTrue(
+            result.exitCode != 0,
+            "Build should fail when Java accesses package-private Kotlin: ${result.output}",
+        )
     }
 
     @Test
@@ -45,8 +48,13 @@ class MavenIntegrationTest {
         copyResourceProject("maven-java-interop-positive-project", tempDir)
 
         val result = runMaven(tempDir, "compile")
-        // Java should successfully access public members even when class has some @PackagePrivate members
-        assertTrue(result.exitCode == 0, "Build should succeed when accessing public members: ${result.output}")
+        // Java should successfully access public members even when class has some @PackagePrivate
+        // members
+        assertEquals(
+            result.exitCode,
+            0,
+            "Build should succeed when accessing public members: ${result.output}",
+        )
     }
 
     @Test
@@ -55,7 +63,11 @@ class MavenIntegrationTest {
 
         val result = runMaven(tempDir, "compile")
         // Java in same package should be allowed to access package-private Kotlin
-        assertTrue(result.exitCode == 0, "Build should succeed for same package access: ${result.output}")
+        assertEquals(
+            result.exitCode,
+            0,
+            "Build should succeed for same package access: ${result.output}",
+        )
     }
 
     private fun copyResourceProject(name: String, targetDir: File) {
@@ -64,10 +76,8 @@ class MavenIntegrationTest {
     }
 
     private fun runMaven(dir: File, vararg args: String): ProcessResult {
-        val process = ProcessBuilder("mvn", "clean", *args)
-            .directory(dir)
-            .redirectErrorStream(true)
-            .start()
+        val process =
+            ProcessBuilder("mvn", "clean", *args).directory(dir).redirectErrorStream(true).start()
 
         val output = process.inputStream.bufferedReader().readText()
         val exitCode = process.waitFor()
