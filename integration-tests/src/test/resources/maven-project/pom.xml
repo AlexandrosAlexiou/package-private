@@ -20,9 +20,9 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.acme</groupId>
+            <groupId>dev.packageprivate</groupId>
             <artifactId>package-private-annotations-jvm</artifactId>
-            <version>0.1.0</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
@@ -48,9 +48,9 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.acme</groupId>
+                        <groupId>dev.packageprivate</groupId>
                         <artifactId>package-private-compiler-plugin</artifactId>
-                        <version>0.1.0</version>
+                        <version>1.0.0</version>
                     </dependency>
                 </dependencies>
             </plugin>

@@ -1,4 +1,4 @@
-package com.acme.packageprivate.compiler
+package dev.packageprivate.compiler
 
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGenerator
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.*
 class PackagePrivateClassGeneratorExtension : ClassGeneratorExtension {
 
     companion object {
-        private val PACKAGE_PRIVATE_FQ_NAME = FqName("com.acme.packageprivate.PackagePrivate")
+        private val PACKAGE_PRIVATE_FQ_NAME = FqName("dev.packageprivate.PackagePrivate")
     }
 
     override fun generateClass(generator: ClassGenerator, declaration: IrClass?): ClassGenerator {

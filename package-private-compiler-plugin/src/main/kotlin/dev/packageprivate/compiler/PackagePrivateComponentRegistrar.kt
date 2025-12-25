@@ -1,4 +1,4 @@
-package com.acme.packageprivate.compiler
+package dev.packageprivate.compiler
 
 import org.jetbrains.kotlin.backend.jvm.extensions.ClassGeneratorExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar

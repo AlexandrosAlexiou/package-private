@@ -1,4 +1,4 @@
-package com.acme.packageprivate.compiler
+package dev.packageprivate.compiler
 
 import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
@@ -16,7 +16,7 @@ class PackagePrivateCheckerTest {
     private val annotationSource = SourceFile.kotlin(
         "PackagePrivate.kt",
         """
-        package com.acme.packageprivate
+        package dev.packageprivate
 
         @Target(
             AnnotationTarget.CLASS,
@@ -38,7 +38,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate
                 class Internal {
@@ -69,7 +69,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate
                 class Internal
@@ -101,7 +101,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 class Helper {
                     @PackagePrivate
@@ -135,7 +135,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.generated
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate(scope = "com.example.api")
                 class GeneratedHelper {
@@ -167,7 +167,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.generated
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate(scope = "com.example.api")
                 class GeneratedHelper
@@ -198,7 +198,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 class Restricted @PackagePrivate constructor()
                 """
@@ -228,7 +228,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate
                 fun internalUtil(): Int = 42
@@ -259,7 +259,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate
                 class KotlinInternal {
@@ -286,7 +286,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 class Helper {
                     @PackagePrivate 
@@ -311,7 +311,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 @PackagePrivate
                 class HiddenClass {
@@ -341,7 +341,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 class Helper {
                     @PackagePrivate
@@ -379,7 +379,7 @@ class PackagePrivateCheckerTest {
                 """
                 package com.example.internal
 
-                import com.acme.packageprivate.PackagePrivate
+                import dev.packageprivate.PackagePrivate
 
                 class Data {
                     @PackagePrivate

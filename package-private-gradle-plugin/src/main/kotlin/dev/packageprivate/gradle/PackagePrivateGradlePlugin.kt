@@ -1,4 +1,4 @@
-package com.acme.packageprivate.gradle
+package dev.packageprivate.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider

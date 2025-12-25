@@ -1,6 +1,6 @@
 package com.example.internal
 
-import com.acme.packageprivate.PackagePrivate
+import dev.packageprivate.PackagePrivate
 
 @PackagePrivate
 class Helper {

@@ -1,4 +1,4 @@
-package com.acme.packageprivate.compiler
+package dev.packageprivate.compiler
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -34,7 +34,7 @@ class PackagePrivateChecker(session: FirSession) : FirAdditionalCheckersExtensio
 }
 
 private val PACKAGE_PRIVATE_CLASS_ID = ClassId(
-    FqName("com.acme.packageprivate"),
+    FqName("dev.packageprivate"),
     org.jetbrains.kotlin.name.Name.identifier("PackagePrivate")
 )
 

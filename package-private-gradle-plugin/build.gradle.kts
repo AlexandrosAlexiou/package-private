@@ -15,7 +15,7 @@ gradlePlugin {
   plugins {
     create("packagePrivate") {
       id = "com.acme.package-private"
-      implementationClass = "com.acme.packageprivate.gradle.PackagePrivateGradlePlugin"
+      implementationClass = "dev.packageprivate.gradle.PackagePrivateGradlePlugin"
     }
   }
 }

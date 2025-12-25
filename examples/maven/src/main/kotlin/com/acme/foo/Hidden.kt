@@ -1,6 +1,6 @@
 package com.acme.foo
 
-import com.acme.packageprivate.PackagePrivate
+import dev.packageprivate.PackagePrivate
 
 @PackagePrivate
 class Hidden {
