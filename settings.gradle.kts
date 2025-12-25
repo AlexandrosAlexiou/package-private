@@ -6,6 +6,8 @@ include(
   ":package-private-gradle-plugin",
   ":integration-tests",
   ":examples:gradle",
+  ":examples:java-gradle",
 )
 
 project(":examples:gradle").name = "example-gradle"
+project(":examples:java-gradle").name = "example-java-gradle"
