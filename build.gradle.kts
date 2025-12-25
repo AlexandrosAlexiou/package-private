@@ -3,8 +3,8 @@ plugins {
   kotlin("multiplatform") version "2.0.21" apply false
 }
 
-group = "com.acme"
-version = "0.2.0"
+group = "dev.packageprivate"
+version = "1.0.0"
 
 repositories {
   mavenCentral()

@@ -1,4 +1,4 @@
-package com.acme.packageprivate.compiler
+package dev.packageprivate.compiler
 
 import org.apache.maven.plugin.MojoExecution
 import org.apache.maven.project.MavenProject

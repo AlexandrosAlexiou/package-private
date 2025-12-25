@@ -1,6 +1,6 @@
 package com.example.internal
 
-import com.acme.packageprivate.PackagePrivate
+import dev.packageprivate.PackagePrivate
 
 // This class has both package-private and public members
 class MixedVisibility {

@@ -1,4 +1,4 @@
-package com.acme.packageprivate
+package dev.packageprivate
 
 /**
  * Marks a declaration as package-private.

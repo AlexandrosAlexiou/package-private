@@ -3,7 +3,7 @@
     <component>
       <role>org.jetbrains.kotlin.maven.KotlinMavenPluginExtension</role>
       <role-hint>package-private</role-hint>
-      <implementation>com.acme.packageprivate.compiler.PackagePrivateMavenPlugin</implementation>
+      <implementation>dev.packageprivate.compiler.PackagePrivateMavenPlugin</implementation>
       <description/>
       <isolated-realm>false</isolated-realm>
     </component>

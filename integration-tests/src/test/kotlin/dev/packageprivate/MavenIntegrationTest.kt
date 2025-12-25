@@ -1,4 +1,4 @@
-package com.acme.packageprivate
+package dev.packageprivate
 
 import java.io.File
 import kotlin.test.assertContains

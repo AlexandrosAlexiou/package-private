@@ -1,4 +1,4 @@
-package com.acme.packageprivate.compiler
+package dev.packageprivate.compiler
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
