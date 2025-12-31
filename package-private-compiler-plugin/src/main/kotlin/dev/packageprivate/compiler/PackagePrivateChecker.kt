@@ -11,14 +11,19 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -38,103 +43,105 @@ private val PACKAGE_PRIVATE_CLASS_ID = ClassId(
     org.jetbrains.kotlin.name.Name.identifier("PackagePrivate")
 )
 
+private fun FirAnnotation.hasPackagePrivateClassId(): Boolean {
+    val typeRef = this.annotationTypeRef as? FirResolvedTypeRef ?: return false
+    return typeRef.coneType.classId == PACKAGE_PRIVATE_CLASS_ID
+}
+
+@OptIn(SymbolInternals::class)
 private object PackagePrivateCallChecker : FirCallChecker(MppCheckerKind.Common) {
-    override fun check(expression: FirCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val containingFile = context.containingFile ?: return
-        val callerPackage = containingFile.packageDirective.packageFqName
+    context(ctx: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCall) {
+        val fileSymbol = ctx.containingFileSymbol ?: return
+        val callerPackage = fileSymbol.fir.packageDirective.packageFqName
 
         val resolvable = expression as? FirResolvable ?: return
         val symbol = resolvable.calleeReference.toResolvedCallableSymbol() ?: return
 
         // Check if the called symbol itself is package-private
-        checkSymbol(symbol, callerPackage, expression, context, reporter)
+        checkSymbol(symbol, callerPackage, expression)
 
         // For constructors, also check if the containing class is package-private
         if (symbol is FirConstructorSymbol) {
-            val classSymbol = symbol.resolvedReturnType.toRegularClassSymbol(context.session)
-            classSymbol?.let { cls ->
-                val annotation = cls.annotations.getAnnotationByClassId(PACKAGE_PRIVATE_CLASS_ID, context.session)
-                if (annotation != null) {
-                    val scopeOverride = extractScopeFromAnnotation(annotation)
-                    val targetPackage = if (scopeOverride.isNotEmpty()) {
-                        FqName(scopeOverride)
-                    } else {
-                        cls.classId.packageFqName
-                    }
-                    if (callerPackage != targetPackage) {
-                        reporter.reportOn(
-                            expression.source,
-                            PackagePrivateErrors.PACKAGE_PRIVATE_ACCESS,
-                            cls.classId.asSingleFqName().asString(),
-                            targetPackage.asString(),
-                            context
-                        )
-                    }
+            val returnType = symbol.resolvedReturnType
+            val classSymbol = returnType.toRegularClassSymbol(ctx.session) ?: return
+            
+            val annotation = classSymbol.annotations.firstOrNull { it.hasPackagePrivateClassId() }
+            if (annotation != null) {
+                val scopeOverride = extractScopeFromAnnotation(annotation)
+                val targetPackage = if (scopeOverride.isNotEmpty()) {
+                    FqName(scopeOverride)
+                } else {
+                    classSymbol.classId.packageFqName
+                }
+                if (callerPackage != targetPackage) {
+                    val source = expression.source ?: return
+                    reporter.reportOn(
+                        source,
+                        PackagePrivateErrors.PACKAGE_PRIVATE_ACCESS,
+                        classSymbol.classId.asSingleFqName().asString(),
+                        targetPackage.asString()
+                    )
                 }
             }
         }
     }
 
+    context(ctx: CheckerContext, reporter: DiagnosticReporter)
     private fun checkSymbol(
         symbol: FirCallableSymbol<*>,
         callerPackage: FqName,
-        expression: FirCall,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
+        expression: FirCall
     ) {
-        val annotation = symbol.annotations.getAnnotationByClassId(PACKAGE_PRIVATE_CLASS_ID, context.session)
-            ?: return
+        val annotation = symbol.annotations.firstOrNull { it.hasPackagePrivateClassId() } ?: return
 
         val scopeOverride = extractScopeFromAnnotation(annotation)
+        val callableId = symbol.callableId ?: return
         val targetPackage = if (scopeOverride.isNotEmpty()) {
             FqName(scopeOverride)
         } else {
-            symbol.callableId.packageName
+            callableId.packageName
         }
 
         if (callerPackage != targetPackage) {
+            val source = expression.source ?: return
             reporter.reportOn(
-                expression.source,
+                source,
                 PackagePrivateErrors.PACKAGE_PRIVATE_ACCESS,
-                symbol.callableId.asSingleFqName().asString(),
-                targetPackage.asString(),
-                context
+                callableId.asSingleFqName().asString(),
+                targetPackage.asString()
             )
         }
     }
 
-    private fun extractScopeFromAnnotation(annotation: org.jetbrains.kotlin.fir.expressions.FirAnnotation): String {
+    private fun extractScopeFromAnnotation(annotation: FirAnnotation): String {
         val argument = annotation.argumentMapping.mapping.entries.firstOrNull {
             it.key.asString() == "scope"
         }?.value
-        return (argument as? org.jetbrains.kotlin.fir.expressions.FirLiteralExpression)?.value as? String ?: ""
+        return (argument as? FirLiteralExpression)?.value as? String ?: ""
     }
 }
 
+@OptIn(SymbolInternals::class)
 private object RedundantPackagePrivateChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
-    override fun check(
-        declaration: FirCallableDeclaration,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
+    context(ctx: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
         // Check if this declaration has @PackagePrivate
-        val hasPackagePrivate = declaration.annotations.any { 
-            it.toAnnotationClassIdSafe(context.session) == PACKAGE_PRIVATE_CLASS_ID 
-        }
+        val hasPackagePrivate = declaration.annotations.any { it.hasPackagePrivateClassId() }
         if (!hasPackagePrivate) return
         
         // Check if containing class also has @PackagePrivate
-        val containingClass = declaration.dispatchReceiverType?.toRegularClassSymbol(context.session) ?: return
-        val classHasPackagePrivate = containingClass.annotations.any {
-            it.toAnnotationClassIdSafe(context.session) == PACKAGE_PRIVATE_CLASS_ID
-        }
+        val dispatchType = declaration.dispatchReceiverType ?: return
+        val containingClass = dispatchType.toRegularClassSymbol(ctx.session) ?: return
+        val classHasPackagePrivate = containingClass.annotations.any { it.hasPackagePrivateClassId() }
         
         if (classHasPackagePrivate) {
+            val source = declaration.source ?: return
+            val callableId = declaration.symbol.callableId ?: return
             reporter.reportOn(
-                declaration.source,
+                source,
                 PackagePrivateErrors.REDUNDANT_PACKAGE_PRIVATE,
-                declaration.symbol.callableId.callableName.asString(),
-                context
+                callableId.callableName.asString()
             )
         }
     }

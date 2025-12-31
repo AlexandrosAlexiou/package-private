@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 @OptIn(ExperimentalCompilerApi::class)
 class PackagePrivateComponentRegistrar : CompilerPluginRegistrar() {
     override val supportsK2: Boolean = true
+    override val pluginId: String = "package-private-compiler-plugin"
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         FirExtensionRegistrarAdapter.registerExtension(PackagePrivateFirExtensionRegistrar())

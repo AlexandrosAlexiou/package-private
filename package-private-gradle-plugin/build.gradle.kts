@@ -8,7 +8,7 @@ kotlin {
 }
 
 dependencies {
-  compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin-api:2.0.21")
+  compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin-api:2.3.0")
 }
 
 gradlePlugin {

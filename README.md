@@ -9,7 +9,7 @@ A Kotlin compiler plugin that adds <b>package-private</b> visibility to Kotlin, 
 </p>
 
 <p align="center">
-  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.0+-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin"></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.3.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin"></a>
   <a href="https://github.com/AlexandrosAlexiou/package-private/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/Release-v1.0.0-blue?style=for-the-badge" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-green?style=for-the-badge" alt="License"></a>
   <a href="https://github.com/AlexandrosAlexiou/package-private/issues"><img src="https://img.shields.io/github/issues/AlexandrosAlexiou/package-private?style=for-the-badge" alt="Issues"></a>
@@ -67,7 +67,7 @@ import com.example.internal.Helper  // ❌ Compilation error!
 - Compile-time enforcement - access violations are reported as compilation errors
 - Optional `scope` parameter to override the package (useful for generated code)
 - Works with both **Gradle** and **Maven**
-- Supports Kotlin 2.0+ (K2 compiler)
+- Supports Kotlin 2.3.0+ (K2 compiler)
 
 ## Installation
 
@@ -107,7 +107,7 @@ Add to `~/.m2/settings.xml`:
 ```kotlin
 // build.gradle.kts
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.3.0"
 }
 
 repositories {
@@ -132,7 +132,7 @@ dependencies {
 ```groovy
 // build.gradle
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '2.0.21'
+    id 'org.jetbrains.kotlin.jvm' version '2.3.0'
 }
 
 repositories {
@@ -175,7 +175,7 @@ dependencies {
         <plugin>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
-            <version>2.0.21</version>
+            <version>2.3.0</version>
             <executions>
                 <execution>
                     <id>compile</id>
@@ -289,7 +289,7 @@ class GeneratedHelper
 
 ## Requirements
 
-- Kotlin 2.0.21+
+- Kotlin 2.3.0+
 - JDK 21+
 
 ## Building & Testing
