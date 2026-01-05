@@ -13,6 +13,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>maven-local</id>
+            <url>file://${user.home}/.m2/repository</url>
+        </repository>
+    </repositories>
+
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -22,7 +30,7 @@
         <dependency>
             <groupId>dev.packageprivate</groupId>
             <artifactId>package-private-annotations-jvm</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
     </dependencies>
 
@@ -50,7 +58,7 @@
                     <dependency>
                         <groupId>dev.packageprivate</groupId>
                         <artifactId>package-private-compiler-plugin</artifactId>
-                        <version>1.0.0</version>
+                        <version>1.1.0</version>
                     </dependency>
                 </dependencies>
             </plugin>
