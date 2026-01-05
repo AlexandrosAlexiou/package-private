@@ -61,7 +61,19 @@ jobs:
             -x :package-private-annotations:generateMetadataFileForWatchosX64Publication \
             -x :package-private-annotations:generateMetadataFileForTvosArm64Publication \
             -x :package-private-annotations:generateMetadataFileForTvosSimulatorArm64Publication \
-            -x :package-private-annotations:generateMetadataFileForTvosX64Publication
+            -x :package-private-annotations:generateMetadataFileForTvosX64Publication \
+            -x :package-private-annotations:publishIosArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishIosSimulatorArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishIosX64PublicationToMavenLocal \
+            -x :package-private-annotations:publishMacosArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishMacosX64PublicationToMavenLocal \
+            -x :package-private-annotations:publishWatchosArm32PublicationToMavenLocal \
+            -x :package-private-annotations:publishWatchosArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishWatchosSimulatorArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishWatchosX64PublicationToMavenLocal \
+            -x :package-private-annotations:publishTvosArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishTvosSimulatorArm64PublicationToMavenLocal \
+            -x :package-private-annotations:publishTvosX64PublicationToMavenLocal
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
