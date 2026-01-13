@@ -33,6 +33,12 @@ kotlin {
         nodejs()
     }
 
+    // Wasm target (compile-time checks only, no runtime enforcement)
+    wasmJs {
+        browser()
+        nodejs()
+    }
+
     sourceSets {
         val commonMain by getting
     }

@@ -7,8 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-  # JVM-only build on Linux (faster, cheaper)
-  build-jvm:
+  # Primary build: JVM, JS, Wasm, Linux, and Windows targets
+  # Runs on Ubuntu for speed and cost efficiency
+  build:
     runs-on: ubuntu-latest
     
     steps:
@@ -23,7 +24,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build and test (JVM only)
+      - name: Build and test (JVM, JS, Wasm, Linux, Windows)
         run: |
           ./gradlew build test \
             -x :package-private-annotations:compileKotlinIosArm64 \
@@ -79,11 +80,12 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-jvm
+          name: test-results
           path: '**/build/reports/tests/'
 
-  # Full build with Native targets on macOS
-  build-native:
+  # Apple platform build: iOS, macOS, watchOS, tvOS targets
+  # Requires macOS runner for Xcode toolchain
+  build-apple:
     runs-on: macos-latest
     
     steps:
@@ -98,12 +100,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build all targets
-        run: ./gradlew build test
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-native
-          path: '**/build/reports/tests/'
+      - name: Build and test (Apple targets only)
+        run: |
+          ./gradlew \
+            :package-private-annotations:compileKotlinIosArm64 \
+            :package-private-annotations:compileKotlinIosSimulatorArm64 \
+            :package-private-annotations:compileKotlinIosX64 \
+            :package-private-annotations:compileKotlinMacosArm64 \
+            :package-private-annotations:compileKotlinMacosX64 \
+            :package-private-annotations:compileKotlinWatchosArm32 \
+            :package-private-annotations:compileKotlinWatchosArm64 \
+            :package-private-annotations:compileKotlinWatchosSimulatorArm64 \
+            :package-private-annotations:compileKotlinWatchosX64 \
+            :package-private-annotations:compileKotlinTvosArm64 \
+            :package-private-annotations:compileKotlinTvosSimulatorArm64 \
+            :package-private-annotations:compileKotlinTvosX64
