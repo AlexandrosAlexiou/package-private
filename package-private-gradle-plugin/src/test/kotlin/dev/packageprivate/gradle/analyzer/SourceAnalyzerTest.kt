@@ -585,4 +585,115 @@ class SourceAnalyzerTest {
             analyzer.dispose()
         }
     }
+
+    @Test
+    fun `comprehensive example with all features`() {
+        // Simulates the example-gradle module structure
+        val internalPkg = File(tempDir, "com/acme/internal").apply { mkdirs() }
+        val apiPkg = File(tempDir, "com/acme/api").apply { mkdirs() }
+        val otherPkg = File(tempDir, "com/acme/other").apply { mkdirs() }
+        
+        // InternalHelper - should be a candidate (only used within package)
+        File(internalPkg, "InternalHelper.kt").writeText("""
+            package com.acme.internal
+            
+            class InternalHelper {
+                fun compute(): Int = 42
+            }
+            
+            internal fun utilityFunction(): String = "utility"
+        """.trimIndent())
+        
+        // InternalObject - should be a candidate (only used within package)
+        File(internalPkg, "InternalObject.kt").writeText("""
+            package com.acme.internal
+            
+            object InternalObject {
+                fun getInstance(): String = "singleton"
+            }
+        """.trimIndent())
+        
+        // InternalService - uses InternalHelper, utilityFunction, InternalObject within same package
+        File(internalPkg, "InternalService.kt").writeText("""
+            package com.acme.internal
+            
+            class InternalService {
+                private val helper = InternalHelper()
+                
+                fun doWork(): String {
+                    val result = helper.compute()
+                    val util = utilityFunction()
+                    val singleton = InternalObject.getInstance()
+                    return "Result: ${'$'}result"
+                }
+            }
+        """.trimIndent())
+        
+        // TypeUsageExample - uses type references
+        File(internalPkg, "TypeUsageExample.kt").writeText("""
+            package com.acme.internal
+            
+            class TypeUsageExample {
+                private val helper: InternalHelper = InternalHelper()
+                fun process(h: InternalHelper): Int = h.compute()
+            }
+        """.trimIndent())
+        
+        // PublicApi - uses InternalService from different package
+        File(apiPkg, "PublicApi.kt").writeText("""
+            package com.acme.api
+            
+            import com.acme.internal.InternalService
+            
+            class PublicApi {
+                private val service = InternalService()
+                fun execute(): String = service.doWork()
+            }
+        """.trimIndent())
+        
+        // StarImportExample - uses star import
+        File(otherPkg, "StarImportExample.kt").writeText("""
+            package com.acme.other
+            
+            import com.acme.api.*
+            
+            class StarImportExample {
+                private val api = PublicApi()
+                fun run(): String = api.execute()
+            }
+        """.trimIndent())
+        
+        // QualifiedRefExample - uses qualified references without import
+        File(otherPkg, "QualifiedRefExample.kt").writeText("""
+            package com.acme.other
+            
+            class QualifiedRefExample {
+                private val api = com.acme.api.PublicApi()
+            }
+        """.trimIndent())
+        
+        val analyzer = SourceAnalyzer()
+        try {
+            val result = analyzer.analyze(tempDir.walkTopDown().filter { it.extension == "kt" }.toList())
+            
+            val finder = CandidateFinder(includePublic = true, includeInternal = true)
+            val candidates = finder.findCandidates(result)
+            
+            val candidateNames = candidates.map { it.declaration.name }.toSet()
+            
+            // These should be candidates (only used within com.acme.internal)
+            assertTrue("InternalHelper" in candidateNames, "InternalHelper should be a candidate")
+            assertTrue("utilityFunction" in candidateNames, "utilityFunction should be a candidate")
+            assertTrue("InternalObject" in candidateNames, "InternalObject should be a candidate")
+            assertTrue("TypeUsageExample" in candidateNames, "TypeUsageExample should be a candidate")
+            
+            // InternalService is used from com.acme.api - NOT a candidate
+            assertTrue("InternalService" !in candidateNames, "InternalService should NOT be a candidate (used cross-package)")
+            
+            // PublicApi is used from com.acme.other via star import and qualified ref - NOT a candidate
+            assertTrue("PublicApi" !in candidateNames, "PublicApi should NOT be a candidate (used cross-package)")
+        } finally {
+            analyzer.dispose()
+        }
+    }
 }
