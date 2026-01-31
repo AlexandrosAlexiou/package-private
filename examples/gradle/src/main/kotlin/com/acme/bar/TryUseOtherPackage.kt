@@ -5,6 +5,5 @@ package com.acme.bar
 // fun bad() = Hidden()
 
 // Uncomment to see the compiler plugin fail on typealias cross-package access:
-import com.acme.internal.InternalCallback
-
-fun useCallback(cb: InternalCallback) = cb(42)
+// import com.acme.internal.InternalCallback
+// fun useCallback(cb: InternalCallback) = cb(42)

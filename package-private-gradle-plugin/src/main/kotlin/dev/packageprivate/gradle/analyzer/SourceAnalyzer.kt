@@ -131,6 +131,11 @@ class SourceAnalyzer {
                 super.visitClass(klass)
                 val name = klass.name ?: return
                 
+                // Skip enum entries - they're part of the enum class, not separate candidates
+                if (klass.parent?.parent is KtClass && (klass.parent?.parent as KtClass).isEnum()) {
+                    return
+                }
+                
                 // Determine kind based on class type
                 val kind = when {
                     klass.isEnum() -> DeclarationKind.ENUM_CLASS

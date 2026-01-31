@@ -1,5 +1,7 @@
 package com.acme.internal
 
+import dev.packageprivate.PackagePrivate
+
 /** Enum class candidate - only used within this package. */
 enum class InternalStatus {
     ACTIVE,
@@ -14,5 +16,6 @@ sealed class InternalResult {
     data class Error(val message: String) : InternalResult()
 }
 
-/** Typealias candidate - only used within this package. */
+/** Typealias with @PackagePrivate - demonstrates annotation on typealias. */
+@PackagePrivate
 typealias InternalCallback = (Int) -> String
