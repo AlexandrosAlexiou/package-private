@@ -800,7 +800,7 @@ class SourceAnalyzerTest {
             
             val statusCandidate = candidates.find { it.declaration.name == "Status" }
             assertNotNull(statusCandidate, "Status should be a candidate")
-            assertEquals(DeclarationKind.ENUM_CLASS, statusCandidate?.declaration?.kind)
+            assertEquals(DeclarationKind.ENUM_CLASS, statusCandidate.declaration.kind)
         } finally {
             analyzer.dispose()
         }
@@ -834,7 +834,7 @@ class SourceAnalyzerTest {
             
             val resultCandidate = candidates.find { it.declaration.name == "Result" }
             assertNotNull(resultCandidate, "Result should be a candidate")
-            assertEquals(DeclarationKind.SEALED_CLASS, resultCandidate?.declaration?.kind)
+            assertEquals(DeclarationKind.SEALED_CLASS, resultCandidate.declaration.kind)
         } finally {
             analyzer.dispose()
         }
@@ -866,7 +866,7 @@ class SourceAnalyzerTest {
             
             val stringListCandidate = candidates.find { it.declaration.name == "StringList" }
             assertNotNull(stringListCandidate, "StringList should be a candidate")
-            assertEquals(DeclarationKind.TYPEALIAS, stringListCandidate?.declaration?.kind)
+            assertEquals(DeclarationKind.TYPEALIAS, stringListCandidate.declaration.kind)
             
             // Handler is not used, so still a candidate
             val handlerCandidate = candidates.find { it.declaration.name == "Handler" }
@@ -1046,7 +1046,7 @@ class SourceAnalyzerTest {
             // Extension function should be tracked
             val extensionDecl = result.declarations.find { it.name == "toTitleCase" }
             assertNotNull(extensionDecl, "Extension function should be tracked")
-            assertEquals(DeclarationKind.FUNCTION, extensionDecl?.kind)
+            assertEquals(DeclarationKind.FUNCTION, extensionDecl.kind)
         } finally {
             analyzer.dispose()
         }
