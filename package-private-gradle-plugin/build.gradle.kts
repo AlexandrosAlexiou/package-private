@@ -1,6 +1,7 @@
 plugins {
   kotlin("jvm")
   id("java-gradle-plugin")
+  id("maven-publish")
 }
 
 kotlin {
@@ -28,5 +29,11 @@ gradlePlugin {
       id = "dev.packageprivate.package-private"
       implementationClass = "dev.packageprivate.gradle.PackagePrivateGradlePlugin"
     }
+  }
+}
+
+publishing {
+  repositories {
+    mavenLocal()
   }
 }
