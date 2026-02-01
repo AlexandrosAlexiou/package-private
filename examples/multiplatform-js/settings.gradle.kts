@@ -6,7 +6,4 @@ pluginManagement {
         gradlePluginPortal()
         mavenCentral()
     }
-    
-    // Include the parent build to resolve the plugin from source
-    includeBuild("../..")
 }
