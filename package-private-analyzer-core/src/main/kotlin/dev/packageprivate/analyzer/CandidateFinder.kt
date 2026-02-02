@@ -1,4 +1,4 @@
-package dev.packageprivate.gradle.analyzer
+package dev.packageprivate.analyzer
 
 /**
  * Finds declarations that are candidates for @PackagePrivate annotation.

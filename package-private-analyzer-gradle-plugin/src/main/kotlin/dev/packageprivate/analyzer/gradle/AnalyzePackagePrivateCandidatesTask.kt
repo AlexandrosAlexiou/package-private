@@ -1,5 +1,6 @@
-package dev.packageprivate.gradle.analyzer
+package dev.packageprivate.analyzer.gradle
 
+import dev.packageprivate.analyzer.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty

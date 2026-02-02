@@ -1,13 +1,16 @@
 plugins {
     kotlin("jvm") version "2.3.0"
     id("dev.packageprivate.package-private") version "1.2.0"
+    id("dev.packageprivate.analyzer") version "1.2.0"
 }
 
 kotlin { jvmToolchain(21) }
 
-// The plugin automatically:
+// The package-private plugin automatically:
 // - Adds the package-private-annotations dependency
 // - Applies the compiler plugin for @PackagePrivate enforcement
+//
+// The analyzer plugin:
 // - Registers the analyzePackagePrivateCandidates task
 //
 // Run: ./gradlew analyzePackagePrivateCandidates

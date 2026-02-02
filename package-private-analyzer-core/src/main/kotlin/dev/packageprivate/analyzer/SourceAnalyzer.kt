@@ -1,4 +1,4 @@
-package dev.packageprivate.gradle.analyzer
+package dev.packageprivate.analyzer
 
 import java.io.File
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
