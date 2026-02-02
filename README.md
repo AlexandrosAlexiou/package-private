@@ -272,12 +272,36 @@ class GeneratedHelper
 
 ## Finding Candidates for @PackagePrivate
 
-The plugin includes an analyzer that scans your codebase to find declarations that are good candidates for `@PackagePrivate` - public or internal declarations that are only used within their own package.
+The package-private project includes **separate analyzer plugins** that scan your codebase to find declarations that are good candidates for `@PackagePrivate` - public or internal declarations that are only used within their own package.
+
+### Installing the Analyzer
+
+**Gradle:**
+```kotlin
+plugins {
+    id("dev.packageprivate.analyzer") version "1.0.0"
+}
+```
+
+**Maven:**
+```xml
+<plugin>
+    <groupId>dev.packageprivate.analyzer</groupId>
+    <artifactId>package-private-analyzer-maven-plugin</artifactId>
+    <version>1.0.0</version>
+</plugin>
+```
 
 ### Running the Analyzer
 
+**Gradle:**
 ```bash
 ./gradlew analyzePackagePrivateCandidates
+```
+
+**Maven:**
+```bash
+mvn dev.packageprivate.analyzer:package-private-analyzer-maven-plugin:1.0.0:analyze
 ```
 
 ### Example Output
@@ -308,13 +332,28 @@ com.example.internal.utilityFunction (function)
 
 ### Configuration
 
+**Gradle:**
 ```kotlin
 // build.gradle.kts
-packagePrivate {
-    includePublic = true      // Suggest for public declarations (default: true)
-    includeInternal = true    // Suggest for internal declarations (default: true)
-    outputFile = file("build/reports/candidates.txt")  // Optional output file
+tasks.named<AnalyzePackagePrivateCandidatesTask>("analyzePackagePrivateCandidates") {
+    includePublic.set(true)      // Suggest for public declarations (default: true)
+    includeInternal.set(true)    // Suggest for internal declarations (default: true)
+    outputFile.set(file("build/reports/candidates.txt"))
 }
+```
+
+**Maven:**
+```xml
+<plugin>
+    <groupId>dev.packageprivate.analyzer</groupId>
+    <artifactId>package-private-analyzer-maven-plugin</artifactId>
+    <version>1.0.0</version>
+    <configuration>
+        <includePublic>true</includePublic>
+        <includeInternal>true</includeInternal>
+        <outputFile>${project.basedir}/analysis-report.txt</outputFile>
+    </configuration>
+</plugin>
 ```
 
 ## Platform Support
@@ -332,7 +371,15 @@ packagePrivate {
 - **Reflection (JVM)**: Can bypass with `setAccessible(true)`
 - **Non-JVM platforms**: Compile-time enforcement only - no runtime visibility exists
 
-**Note:** Maven doesn't need a separate plugin - it discovers the compiler plugin via `components.xml` automatically.
+### Maven vs Gradle Plugins
+
+**Compiler Plugin:**
+- **Gradle**: Use `package-private-gradle-plugin` (convenience wrapper) OR configure `package-private-compiler-plugin` directly
+- **Maven**: Use `package-private-compiler-plugin` directly - discovered automatically via `components.xml`
+
+**Analyzer Plugin:**
+- **Gradle**: Use `package-private-analyzer-gradle-plugin` (separate plugin)
+- **Maven**: Use `package-private-analyzer-maven-plugin` (separate plugin)
 
 ## Requirements
 
