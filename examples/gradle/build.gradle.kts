@@ -4,7 +4,12 @@ plugins {
     id("dev.packageprivate.analyzer") version "1.0.0"
 }
 
-kotlin { jvmToolchain(21) }
+kotlin {
+    jvmToolchain(21)
+    compilerOptions {
+        allWarningsAsErrors.set(false)
+    }
+}
 
 // The package-private plugin automatically:
 // - Adds the package-private-annotations dependency
