@@ -252,6 +252,7 @@ fun broken() = Helper()
 | Function | `@PackagePrivate fun helper()` |
 | Property | `@PackagePrivate val config: Config` |
 | Constructor | `class Foo @PackagePrivate constructor()` |
+| Typealias | `@PackagePrivate typealias StringMap = Map<String, String>` |
 
 ### Scope Override
 
