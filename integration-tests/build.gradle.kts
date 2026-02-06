@@ -15,4 +15,7 @@ tasks.test {
   useJUnitPlatform()
   dependsOn(":package-private-annotations:publishToMavenLocal")
   dependsOn(":package-private-compiler-plugin:publishToMavenLocal")
+  dependsOn(":package-private-analyzer-core:publishToMavenLocal")
+  dependsOn(":package-private-analyzer-gradle-plugin:publishToMavenLocal")
+  dependsOn(":package-private-analyzer-maven-plugin:publishToMavenLocal")
 }
