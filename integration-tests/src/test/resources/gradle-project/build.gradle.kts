@@ -8,6 +8,6 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.packageprivate:package-private-annotations:1.3.0")
-    kotlinCompilerPluginClasspath("dev.packageprivate:package-private-compiler-plugin:1.3.0")
+    implementation("dev.packageprivate:package-private-annotations:1.3.1")
+    kotlinCompilerPluginClasspath("dev.packageprivate:package-private-compiler-plugin:1.3.1")
 }

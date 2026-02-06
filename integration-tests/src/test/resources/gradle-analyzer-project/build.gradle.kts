@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("dev.packageprivate.analyzer:package-private-analyzer-gradle-plugin:1.3.0")
+        classpath("dev.packageprivate.analyzer:package-private-analyzer-gradle-plugin:1.3.1")
     }
 }
 
@@ -20,5 +20,5 @@ repositories {
 }
 
 dependencies {
-    implementation("dev.packageprivate:package-private-annotations:1.3.0")
+    implementation("dev.packageprivate:package-private-annotations:1.3.1")
 }
