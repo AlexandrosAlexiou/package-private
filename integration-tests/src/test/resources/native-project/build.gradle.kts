@@ -10,7 +10,7 @@ repositories {
 val compilerPlugin by configurations.creating
 
 dependencies {
-    compilerPlugin("dev.packageprivate:package-private-compiler-plugin:1.3.1")
+    compilerPlugin("dev.packageprivate:package-private-compiler-plugin:1.3.2")
 }
 
 kotlin {
@@ -37,7 +37,7 @@ kotlin {
     sourceSets {
         val nativeMain by getting {
             dependencies {
-                implementation("dev.packageprivate:package-private-annotations:1.3.1")
+                implementation("dev.packageprivate:package-private-annotations:1.3.2")
             }
         }
     }

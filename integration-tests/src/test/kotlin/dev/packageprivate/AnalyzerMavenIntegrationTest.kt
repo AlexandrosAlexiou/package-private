@@ -17,7 +17,7 @@ class AnalyzerMavenIntegrationTest {
         val result =
             runMaven(
                 tempDir,
-                "dev.packageprivate.analyzer:package-private-analyzer-maven-plugin:1.3.1:analyze",
+                "dev.packageprivate.analyzer:package-private-analyzer-maven-plugin:1.3.2:analyze",
             )
         assertEquals(0, result.exitCode, "Analyzer should succeed: ${result.output}")
 
@@ -40,7 +40,7 @@ class AnalyzerMavenIntegrationTest {
         val result =
             runMaven(
                 tempDir,
-                "dev.packageprivate.analyzer:package-private-analyzer-maven-plugin:1.3.1:analyze",
+                "dev.packageprivate.analyzer:package-private-analyzer-maven-plugin:1.3.2:analyze",
             )
         assertEquals(0, result.exitCode, "Analyzer should succeed: ${result.output}")
 

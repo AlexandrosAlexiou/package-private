@@ -5,7 +5,7 @@ plugins {
 
 // Unified version for all components
 group = "dev.packageprivate"
-version = "1.3.1"
+version = "1.3.2"
 
 repositories {
   mavenCentral()

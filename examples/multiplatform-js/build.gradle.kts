@@ -1,10 +1,10 @@
 plugins {
     kotlin("multiplatform") version "2.3.0"
-    id("dev.packageprivate.package-private") version "1.3.1"
-    id("dev.packageprivate.analyzer") version "1.3.1"
+    id("dev.packageprivate.package-private") version "1.3.2"
+    id("dev.packageprivate.analyzer") version "1.3.2"
 }
 
-version = "1.3.1"
+version = "1.3.2"
 
 repositories {
     mavenLocal()
@@ -36,7 +36,7 @@ kotlin {
 // The Gradle plugin's KotlinCompilerPluginSupportPlugin mechanism doesn't work reliably
 // for non-JVM targets, so we use kotlinCompilerPluginClasspath directly.
 dependencies {
-    kotlinCompilerPluginClasspath("dev.packageprivate:package-private-compiler-plugin:1.3.1")
+    kotlinCompilerPluginClasspath("dev.packageprivate:package-private-compiler-plugin:1.3.2")
 }
 
 // The plugin automatically:
