@@ -3,8 +3,8 @@ package com.acme.other
 import dev.packageprivate.PackagePrivate
 
 /**
- * This file uses fully qualified references (no import).
- * The analyzer correctly detects these usages.
+ * This file uses fully qualified references (no import). The analyzer correctly detects these
+ * usages.
  */
 @PackagePrivate
 class QualifiedRefExample {

@@ -1,35 +1,35 @@
 plugins {
-  kotlin("jvm")
-  id("maven-publish")
+    kotlin("jvm")
+    id("maven-publish")
 }
 
-kotlin {
-  jvmToolchain(21)
-}
+kotlin { jvmToolchain(21) }
 
 dependencies {
-  implementation(project(":package-private-analyzer-core"))
-  
-  // Maven plugin API
-  compileOnly("org.apache.maven:maven-plugin-api:3.9.6")
-  compileOnly("org.apache.maven:maven-core:3.9.6")
-  compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.11.0")
-  
-  testImplementation("org.jetbrains.kotlin:kotlin-test:2.3.0")
-  testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    implementation(project(":package-private-analyzer-core"))
+
+    // Maven plugin API
+    compileOnly("org.apache.maven:maven-plugin-api:3.9.6")
+    compileOnly("org.apache.maven:maven-core:3.9.6")
+    compileOnly("org.apache.maven.plugin-tools:maven-plugin-annotations:3.11.0")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.3.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
 }
 
 tasks.test { useJUnitPlatform() }
 
 // Generate Maven plugin descriptor
-val generatePluginDescriptor by tasks.registering {
-    val descriptorFile = file("$buildDir/generated-resources/META-INF/maven/plugin.xml")
-    outputs.file(descriptorFile)
-    
-    doLast {
-        descriptorFile.apply {
-            parentFile.mkdirs()
-            writeText("""<?xml version="1.0" encoding="UTF-8"?>
+val generatePluginDescriptor by
+    tasks.registering {
+        val descriptorFile = file("$buildDir/generated-resources/META-INF/maven/plugin.xml")
+        outputs.file(descriptorFile)
+
+        doLast {
+            descriptorFile.apply {
+                parentFile.mkdirs()
+                writeText(
+                    """<?xml version="1.0" encoding="UTF-8"?>
 <plugin>
     <name>Package Private Analyzer Maven Plugin</name>
     <description>Maven plugin for analyzing package-private candidates in Kotlin code</description>
@@ -109,25 +109,14 @@ val generatePluginDescriptor by tasks.registering {
         </dependency>
     </dependencies>
 </plugin>
-""")
+"""
+                )
+            }
         }
     }
-}
 
-sourceSets {
-    main {
-        resources {
-            srcDir("$buildDir/generated-resources")
-        }
-    }
-}
+sourceSets { main { resources { srcDir("$buildDir/generated-resources") } } }
 
-tasks.named("processResources") {
-    dependsOn(generatePluginDescriptor)
-}
+tasks.named("processResources") { dependsOn(generatePluginDescriptor) }
 
-publishing {
-  repositories {
-    mavenLocal()
-  }
-}
+publishing { repositories { mavenLocal() } }

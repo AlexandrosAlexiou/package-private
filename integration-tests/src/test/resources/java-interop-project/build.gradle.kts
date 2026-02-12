@@ -1,6 +1,4 @@
-plugins {
-    kotlin("jvm") version "2.3.10"
-}
+plugins { kotlin("jvm") version "2.3.10" }
 
 repositories {
     mavenLocal()

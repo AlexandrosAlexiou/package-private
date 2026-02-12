@@ -112,11 +112,12 @@ class SourceAnalyzer {
     private fun parseKotlinFile(file: File, projectRoot: File?): KtFile? {
         return try {
             val content = file.readText()
-            val filePath = if (projectRoot != null) {
-                file.relativeTo(projectRoot).path
-            } else {
-                file.name
-            }
+            val filePath =
+                if (projectRoot != null) {
+                    file.relativeTo(projectRoot).path
+                } else {
+                    file.name
+                }
             val virtualFile = LightVirtualFile(filePath, KotlinFileType.INSTANCE, content)
             PsiManager.getInstance(environment.project).findFile(virtualFile) as? KtFile
         } catch (e: Exception) {
@@ -489,25 +490,26 @@ class SourceAnalyzer {
                     if (selectorExpr is KtCallExpression) {
                         val methodName = selectorExpr.calleeExpression?.text ?: return
                         var receiverTypeFqName: String? = null
-                        
+
                         // Case 1: Receiver is a variable we know the type of (e.g., api.execute())
                         if (receiverExpr !is KtCallExpression) {
                             val receiverName = receiverExpr.text
                             receiverTypeFqName = localVarTypes[receiverName]
                         }
-                        
+
                         // Case 2: Receiver is a constructor call (e.g., Calculator().add())
                         if (receiverExpr is KtCallExpression) {
                             val constructorName = receiverExpr.calleeExpression?.text ?: return
-                            receiverTypeFqName = resolveToFqName(
-                                constructorName,
-                                imports,
-                                starImportPackages,
-                                callerPackage,
-                                knownDeclarations,
-                            )
+                            receiverTypeFqName =
+                                resolveToFqName(
+                                    constructorName,
+                                    imports,
+                                    starImportPackages,
+                                    callerPackage,
+                                    knownDeclarations,
+                                )
                         }
-                        
+
                         if (receiverTypeFqName != null) {
                             val methodFqName = "$receiverTypeFqName.$methodName"
                             if (methodFqName in knownDeclarations) {

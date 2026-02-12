@@ -6,9 +6,7 @@ plugins {
 
 kotlin {
     jvmToolchain(21)
-    compilerOptions {
-        allWarningsAsErrors.set(false)
-    }
+    compilerOptions { allWarningsAsErrors.set(false) }
 }
 
 // The package-private plugin automatically:

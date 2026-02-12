@@ -2,10 +2,13 @@ package com.example.api
 
 // Uncomment to see the compiler plugin fail the build:
 import com.example.utils.Calculator
+import dev.packageprivate.PackagePrivate
+
 // import com.example.utils.InternalHelper
 // import com.example.utils.utilityFunction
 
 class PublicApi {
+    @PackagePrivate
     fun calculate(x: Int, y: Int): Int {
         // ✅ Calculator is public, so we can use it
         return Calculator().add(x, y)

@@ -67,12 +67,13 @@ class PackagePrivateClassGeneratorExtension : ClassGeneratorExtension {
             exceptions: Array<out String>?,
         ): MethodVisitor {
             val isMethodPackagePrivate = declaration?.hasAnnotation(PACKAGE_PRIVATE_FQ_NAME) == true
-            
+
             // Also check if this is a getter/setter of a @PackagePrivate property
-            val isPropertyAccessorPackagePrivate = (declaration as? IrSimpleFunction)
-                ?.correspondingPropertySymbol
-                ?.owner
-                ?.hasAnnotation(PACKAGE_PRIVATE_FQ_NAME) == true
+            val isPropertyAccessorPackagePrivate =
+                (declaration as? IrSimpleFunction)
+                    ?.correspondingPropertySymbol
+                    ?.owner
+                    ?.hasAnnotation(PACKAGE_PRIVATE_FQ_NAME) == true
 
             val modifiedAccess =
                 if (isMethodPackagePrivate || isPropertyAccessorPackagePrivate) {

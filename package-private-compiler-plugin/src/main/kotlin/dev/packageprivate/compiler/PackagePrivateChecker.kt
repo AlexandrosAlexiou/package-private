@@ -36,14 +36,14 @@ class PackagePrivateChecker(session: FirSession) : FirAdditionalCheckersExtensio
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val callCheckers: Set<FirCallChecker> = setOf(PackagePrivateCallChecker)
     }
-    
+
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> = 
+        override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker> =
             setOf(RedundantPackagePrivateChecker)
     }
-    
+
     override val typeCheckers: TypeCheckers = object : TypeCheckers() {
-        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = 
+        override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> =
             setOf(PackagePrivateTypeAliasChecker)
     }
 }
@@ -75,7 +75,7 @@ private object PackagePrivateCallChecker : FirCallChecker(MppCheckerKind.Common)
         if (symbol is FirConstructorSymbol) {
             val returnType = symbol.resolvedReturnType
             val classSymbol = returnType.toRegularClassSymbol() ?: return
-            
+
             val annotation = classSymbol.annotations.firstOrNull { it.hasPackagePrivateClassId() }
             if (annotation != null) {
                 val scopeOverride = extractScopeFromAnnotation(annotation)
@@ -139,12 +139,12 @@ private object RedundantPackagePrivateChecker : FirCallableDeclarationChecker(Mp
         // Check if this declaration has @PackagePrivate
         val hasPackagePrivate = declaration.annotations.any { it.hasPackagePrivateClassId() }
         if (!hasPackagePrivate) return
-        
+
         // Check if containing class also has @PackagePrivate
         val dispatchType = declaration.dispatchReceiverType ?: return
         val containingClass = dispatchType.toRegularClassSymbol() ?: return
         val classHasPackagePrivate = containingClass.annotations.any { it.hasPackagePrivateClassId() }
-        
+
         if (classHasPackagePrivate) {
             val source = declaration.source ?: return
             val callableId = declaration.symbol.callableId ?: return
@@ -163,22 +163,23 @@ private object PackagePrivateTypeAliasChecker : FirResolvedTypeRefChecker(MppChe
     override fun check(typeRef: FirResolvedTypeRef) {
         val fileSymbol = ctx.containingFileSymbol ?: return
         val callerPackage = fileSymbol.fir.packageDirective.packageFqName
-        
+
         // Check if the type is a typealias
         val coneType = typeRef.coneType.abbreviatedTypeOrSelf
+
         @Suppress("DEPRECATION")
         val typeAliasSymbol = coneType.toTypeAliasSymbol(ctx.session) ?: return
-        
+
         // Check if the typealias has @PackagePrivate
         val annotation = typeAliasSymbol.annotations.firstOrNull { it.hasPackagePrivateClassId() } ?: return
-        
+
         val scopeOverride = extractScopeFromAnnotation(annotation)
         val targetPackage = if (scopeOverride.isNotEmpty()) {
             FqName(scopeOverride)
         } else {
             typeAliasSymbol.classId.packageFqName
         }
-        
+
         if (callerPackage != targetPackage) {
             val source = typeRef.source ?: return
             reporter.reportOn(
@@ -189,7 +190,7 @@ private object PackagePrivateTypeAliasChecker : FirResolvedTypeRefChecker(MppChe
             )
         }
     }
-    
+
     private fun extractScopeFromAnnotation(annotation: FirAnnotation): String {
         val argument = annotation.argumentMapping.mapping.entries.firstOrNull {
             it.key.asString() == "scope"

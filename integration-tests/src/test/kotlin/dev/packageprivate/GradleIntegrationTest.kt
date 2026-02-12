@@ -112,12 +112,8 @@ class GradleIntegrationTest {
     private fun runGradle(dir: File, vararg args: String, quiet: Boolean = true): ProcessResult {
         val baseArgs = mutableListOf("./gradlew", *args, "--no-daemon")
         if (quiet) baseArgs.add("-q")
-        
-        val process =
-            ProcessBuilder(baseArgs)
-                .directory(dir)
-                .redirectErrorStream(true)
-                .start()
+
+        val process = ProcessBuilder(baseArgs).directory(dir).redirectErrorStream(true).start()
 
         val output = process.inputStream.bufferedReader().readText()
         val exitCode = process.waitFor()

@@ -4,6 +4,5 @@ import dev.packageprivate.PackagePrivate
 
 @PackagePrivate
 class Hidden {
-    @PackagePrivate
-    fun helper(): String = "ok"
+    @PackagePrivate fun helper(): String = "ok"
 }

@@ -24,11 +24,12 @@ class PackagePrivateAnalyzerGradlePlugin : Plugin<Project> {
     override fun apply(target: Project) {
         // Create extension
         val extension =
-            target.extensions.create("packagePrivateAnalyzer", PackagePrivateAnalyzerExtension::class.java)
+            target.extensions.create(
+                "packagePrivateAnalyzer",
+                PackagePrivateAnalyzerExtension::class.java,
+            )
 
-        target.afterEvaluate {
-            registerAnalysisTask(target, extension)
-        }
+        target.afterEvaluate { registerAnalysisTask(target, extension) }
     }
 
     private fun registerAnalysisTask(project: Project, extension: PackagePrivateAnalyzerExtension) {

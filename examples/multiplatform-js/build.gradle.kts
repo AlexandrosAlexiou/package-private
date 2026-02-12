@@ -19,16 +19,8 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
-        val jsMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-js"))
-            }
-        }
+        val commonMain by getting { dependencies { implementation(kotlin("stdlib-common")) } }
+        val jsMain by getting { dependencies { implementation(kotlin("stdlib-js")) } }
     }
 }
 
@@ -41,7 +33,8 @@ dependencies {
 
 // The plugin automatically:
 // - Adds the package-private-annotations dependency
-// - Applies the compiler plugin for @PackagePrivate enforcement (via kotlinCompilerPluginClasspath above)
+// - Applies the compiler plugin for @PackagePrivate enforcement (via kotlinCompilerPluginClasspath
+// above)
 // - Registers the analyzePackagePrivateCandidates task
 //
 // Platform support:

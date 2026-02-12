@@ -8,9 +8,7 @@ buildscript {
     }
 }
 
-plugins {
-    kotlin("jvm") version "2.3.10"
-}
+plugins { kotlin("jvm") version "2.3.10" }
 
 apply(plugin = "dev.packageprivate.analyzer")
 
@@ -19,6 +17,4 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation("dev.packageprivate:package-private-annotations:1.3.2")
-}
+dependencies { implementation("dev.packageprivate:package-private-annotations:1.3.2") }

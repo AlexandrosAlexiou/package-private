@@ -36,7 +36,7 @@ class PackagePrivateGradlePlugin : Plugin<Project> {
                     "dev.packageprivate:package-private-annotations:$PLUGIN_VERSION",
                 )
             }
-            
+
             // Add the compiler plugin to the Kotlin compiler classpath
             target.dependencies.add(
                 "kotlinCompilerPluginClasspath",

@@ -1,6 +1,4 @@
-plugins {
-    kotlin("multiplatform") version "2.3.10"
-}
+plugins { kotlin("multiplatform") version "2.3.10" }
 
 repositories {
     mavenLocal()
@@ -9,42 +7,31 @@ repositories {
 
 val compilerPlugin by configurations.creating
 
-dependencies {
-    compilerPlugin("dev.packageprivate:package-private-compiler-plugin:1.3.2")
-}
+dependencies { compilerPlugin("dev.packageprivate:package-private-compiler-plugin:1.3.2") }
 
 kotlin {
     // Use the host target for native compilation
     val hostOs = System.getProperty("os.name")
     val hostArch = System.getProperty("os.arch")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" && hostArch == "aarch64" -> macosArm64("native")
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" && hostArch == "aarch64" -> linuxArm64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        hostOs.startsWith("Windows") -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-    }
-
-    nativeTarget.apply {
-        binaries {
-            executable {
-                entryPoint = "com.example.api.main"
-            }
+    val nativeTarget =
+        when {
+            hostOs == "Mac OS X" && hostArch == "aarch64" -> macosArm64("native")
+            hostOs == "Mac OS X" -> macosX64("native")
+            hostOs == "Linux" && hostArch == "aarch64" -> linuxArm64("native")
+            hostOs == "Linux" -> linuxX64("native")
+            hostOs.startsWith("Windows") -> mingwX64("native")
+            else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
         }
-    }
+
+    nativeTarget.apply { binaries { executable { entryPoint = "com.example.api.main" } } }
 
     sourceSets {
         val nativeMain by getting {
-            dependencies {
-                implementation("dev.packageprivate:package-private-annotations:1.3.2")
-            }
+            dependencies { implementation("dev.packageprivate:package-private-annotations:1.3.2") }
         }
     }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
-    compilerOptions {
-        freeCompilerArgs.add("-Xplugin=${compilerPlugin.files.first()}")
-    }
+    compilerOptions { freeCompilerArgs.add("-Xplugin=${compilerPlugin.files.first()}") }
 }
